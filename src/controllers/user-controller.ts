@@ -3,6 +3,9 @@ import { AppDataSource } from "../config/database";
 import { UserModel } from "../models/user-model";
 
 export class UserController {
+  /**
+   * Метод получения всех пользователей
+   */
   static async getAllUsers(request: Request, response: Response) {
     try {
       const users = await AppDataSource.getRepository(UserModel).find();
@@ -15,6 +18,9 @@ export class UserController {
     }
   }
 
+  /**
+   * Метод получения пользователя по ID
+   */
   static async getUserById(request: Request, response: Response) {
     try {
       const id = Number(request.params.id);
@@ -49,6 +55,13 @@ export class UserController {
     }
   }
 
+  /**
+   *
+   * @param name - имя пользователя
+   * @param email - почта
+   * @param password - пароль
+   * @returns {Record<string, string>} флаги ошибок
+   */
   static async validateRegisterFields(
     name: string | undefined,
     email: string | undefined,
@@ -78,6 +91,9 @@ export class UserController {
     return errors;
   }
 
+  /**
+   * Метод создания пользователя
+   */
   static async createUser(request: Request, response: Response) {
     const { name, email, password } = request.body;
 
