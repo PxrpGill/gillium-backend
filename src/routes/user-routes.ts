@@ -1,12 +1,8 @@
-import { Router, Request, Response } from "express";
-import { AppDataSource } from "../config/database";
-import { UserModel } from "../models/user";
+import { Router } from "express";
+import { UserController } from "../controllers/user-controller";
 
 const userRoutes = Router();
 
-userRoutes.get("/users", async (request: Request, response: Response) => {
-  const users = await AppDataSource.getRepository(UserModel).find();
-  response.json(users);
-});
+userRoutes.get("/users", UserController.getAllUsers);
 
 export default userRoutes;

@@ -2,7 +2,7 @@ import "reflect-metadata";
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { AppDataSource } from "./config/database";
-import { UserModel } from "./models/user";
+import { UserModel } from "./models/user-model";
 import userRoutes from "./routes/user-routes";
 
 dotenv.config();
