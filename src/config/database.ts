@@ -1,8 +1,14 @@
-import sqlite3 from "sqlite3";
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import { User } from "../models/user";
+import dotenv from "dotenv";
 
-export const db = new sqlite3.Database("./mydatabase.db", (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log("Connected to the SQLite database.");
+dotenv.config();
+
+export const AppDataSource = new DataSource({
+  type: "sqlite",
+  database: `./${process.env.DATA_BASE_NAME}`,
+  synchronize: true,
+  logging: false,
+  entities: [User],
 });
