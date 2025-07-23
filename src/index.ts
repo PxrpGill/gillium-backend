@@ -1,9 +1,8 @@
 import "reflect-metadata";
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
 import { AppDataSource } from "./config/database";
-import { UserModel } from "./models/user-model";
-import userRoutes from "./routes/user-routes";
+import AppRoutes from "./routes";
 
 dotenv.config();
 
@@ -11,7 +10,8 @@ const app: Express = express();
 const port = process.env.APP_PORT ?? 3000;
 
 app.use(express.json());
-app.use("/", userRoutes);
+app.use("/", AppRoutes.userRoutes);
+app.use("/", AppRoutes.projectRoutes);
 
 AppDataSource.initialize()
   .then(() => {
