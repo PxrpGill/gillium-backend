@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/database";
 import { UserModel } from "../models/user-model";
+import {
+  generateTokens,
+  verifyRefreshToken,
+} from "../config/jwt-token-generation";
 
 export class UserController {
   /**
@@ -136,5 +140,62 @@ export class UserController {
       console.error("Ошибка при создании пользователя:", error);
       return response.status(500).json({ message: "Ошибка сервера" });
     }
+  }
+
+  static async login(request: Request, response: Response) {
+    const { email, password } = request.body;
+
+    const user = await AppDataSource.getRepository(UserModel).findOneBy({
+      email,
+    });
+
+    if (!user || !(await user.checkPassword(password))) {
+      return response
+        .status(401)
+        .json({ message: "Неверный email или пароль" });
+    }
+
+    const payload = { id: user.id, email: user.email };
+    const { accessToken, refreshToken } = generateTokens(payload);
+
+    response
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .json({ accessToken });
+  }
+
+  static async refreshToken(request: Request, response: Response) {
+    const { refreshToken } = request.cookies;
+
+    if (!refreshToken) {
+      return response.status(401).json({ message: "Нет refresh токена" });
+    }
+
+    try {
+      const payload = verifyRefreshToken(refreshToken) as any;
+      const newTokens = generateTokens({
+        id: payload.id,
+        email: payload.email,
+      });
+
+      response
+        .cookie("refreshToken", newTokens.refreshToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+        .json({ accessToken: newTokens.accessToken });
+    } catch {
+      response.status(403).json({ message: "Недействительный refresh токен" });
+    }
+  }
+
+  static async logout(request: Request, response: Response) {
+    response.clearCookie("refreshToken").json({ message: "Выход выполнен" });
   }
 }

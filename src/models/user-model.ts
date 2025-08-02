@@ -1,6 +1,8 @@
 import "reflect-metadata";
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import bcrypt from "bcrypt";
+import { ProjectModel } from "./project-model";
+import { ProjectUserRoleModel } from "./project-user-role";
 
 @Entity()
 export class UserModel {
@@ -15,6 +17,12 @@ export class UserModel {
 
   @Column()
   passwordHash: string;
+
+  @OneToMany(() => ProjectModel, (project) => project.owner)
+  projects: ProjectModel[];
+
+  @OneToMany(() => ProjectUserRoleModel, (role) => role.user)
+  projectRoles: ProjectUserRoleModel[];
 
   async setPassword(password: string) {
     const saltRounds = 10;
