@@ -3,6 +3,8 @@ import { AppDataSource } from "../config/database";
 import { ProjectModel } from "../models/project-model";
 import { UserModel } from "../models/user-model";
 import { ProjectUserRoleModel } from "../models/project-user-role";
+import { TaskColumnModel } from "../models/task-column-model";
+import { TaskModel } from "../models/task-model";
 
 export class ProjectController {
   /**
@@ -32,6 +34,7 @@ export class ProjectController {
 
   /**
    * Метод получения проекта по слагу
+   * с колонками и задачами
    */
   static async getUserProjectBySlug(request: Request, response: Response) {
     const user = (request as any).user;
@@ -51,12 +54,20 @@ export class ProjectController {
     }
 
     try {
-      const project = await AppDataSource.getRepository(ProjectModel).findOneBy(
-        {
+      const project = await AppDataSource.getRepository(ProjectModel).findOne({
+        where: {
           slug,
           owner: { id: user.id },
-        }
-      );
+        },
+        relations: {
+          owner: true,
+          columns: {
+            tasks: {
+              creator: true,
+            },
+          },
+        },
+      });
 
       if (!project) {
         return response.status(404).json({ message: "Проект не найден" });
@@ -64,8 +75,7 @@ export class ProjectController {
 
       return response.status(200).json(project);
     } catch (error) {
-      console.error("Произошла ошибка при получении проекта");
-
+      console.error("Произошла ошибка при получении проекта:", error);
       return response.status(500).json({ message: "Ошибка сервера" });
     }
   }
@@ -115,6 +125,72 @@ export class ProjectController {
         message: "Ошибка при создании проекта",
         details: (error as any).message,
       });
+    }
+  }
+
+  /**
+   * Метод создания столбца задач
+   */
+  static async createTaskColumn(req: Request, res: Response) {
+    const user = (req as any).user;
+    const { projectId, name } = req.body;
+
+    try {
+      const project = await AppDataSource.getRepository(ProjectModel).findOneBy(
+        {
+          id: projectId,
+          owner: { id: user.id },
+        }
+      );
+
+      if (!project) {
+        return res.status(404).json({ message: "Проект не найден" });
+      }
+
+      const column = AppDataSource.getRepository(TaskColumnModel).create({
+        name,
+        project,
+      });
+
+      await AppDataSource.getRepository(TaskColumnModel).save(column);
+
+      return res.status(201).json(column);
+    } catch (error) {
+      return res.status(500).json({ message: "Ошибка сервера" });
+    }
+  }
+
+  /**
+   * Метод создания задачи
+   */
+  static async createTask(req: Request, res: Response) {
+    const user = (req as any).user;
+    const { columnId, title, description, estimatedTimeHours } = req.body;
+
+    try {
+      const column = await AppDataSource.getRepository(
+        TaskColumnModel
+      ).findOneBy({
+        id: columnId,
+      });
+
+      if (!column) {
+        return res.status(404).json({ message: "Колонка не найдена" });
+      }
+
+      const task = AppDataSource.getRepository(TaskModel).create({
+        title,
+        description,
+        estimatedTimeHours,
+        column,
+        creator: user,
+      });
+
+      await AppDataSource.getRepository(TaskModel).save(task);
+
+      return res.status(201).json(task);
+    } catch (error) {
+      return res.status(500).json({ message: "Ошибка при создании задачи" });
     }
   }
 }

@@ -11,6 +11,7 @@ import {
 import slugify from "slugify";
 import { UserModel } from "./user-model";
 import { ProjectUserRoleModel } from "./project-user-role";
+import { TaskColumnModel } from "./task-column-model";
 
 @Entity()
 export class ProjectModel {
@@ -29,6 +30,9 @@ export class ProjectModel {
 
   @OneToMany(() => ProjectUserRoleModel, (role) => role.project)
   userRoles: ProjectUserRoleModel[];
+
+  @OneToMany(() => TaskColumnModel, (column) => column.project)
+  columns: TaskColumnModel[];
 
   @BeforeInsert()
   @BeforeUpdate()

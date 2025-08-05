@@ -17,3 +17,15 @@ projectRoutes.get(
 );
 
 projectRoutes.post("/project", authMiddleware, ProjectController.createProject);
+
+projectRoutes.post(
+  "/project/:id/column",
+  authMiddleware,
+  ProjectController.createTaskColumn
+);
+
+projectRoutes.post(
+  "/project/:id/task",
+  authMiddleware,
+  ProjectController.createTask
+);
