@@ -14,6 +14,8 @@ const port = process.env.APP_PORT ?? 3000;
 app.use(express.json());
 app.use("/", AppRoutes.userRoutes);
 app.use("/", AppRoutes.projectRoutes);
+app.use("/", AppRoutes.taskRoutes);
+app.use("/", AppRoutes.taskColumnRoutes);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 
