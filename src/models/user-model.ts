@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import bcrypt from "bcrypt";
 import { ProjectModel } from "./project-model";
 import { ProjectUserRoleModel } from "./project-user-role";
+import { Exclude } from "class-transformer";
 
 @Entity()
 export class UserModel {
@@ -15,6 +16,7 @@ export class UserModel {
   @Column({ unique: true })
   email: string;
 
+  @Exclude()
   @Column()
   passwordHash: string;
 

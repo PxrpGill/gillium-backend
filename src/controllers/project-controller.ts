@@ -3,8 +3,7 @@ import { AppDataSource } from "../config/database";
 import { ProjectModel } from "../models/project-model";
 import { UserModel } from "../models/user-model";
 import { ProjectUserRoleModel } from "../models/project-user-role";
-import { TaskColumnModel } from "../models/task-column-model";
-import { TaskModel } from "../models/task-model";
+import { instanceToPlain } from "class-transformer";
 
 export class ProjectController {
   /**
@@ -25,7 +24,7 @@ export class ProjectController {
         relations: ["owner"],
       });
 
-      return response.status(200).json(projects);
+      return response.status(200).json(instanceToPlain(projects));
     } catch (error) {
       console.error(error);
       return response.status(500).json({ message: "Ошибка сервера" });
@@ -73,7 +72,7 @@ export class ProjectController {
         return response.status(404).json({ message: "Проект не найден" });
       }
 
-      return response.status(200).json(project);
+      return response.status(200).json(instanceToPlain(project));
     } catch (error) {
       console.error("Произошла ошибка при получении проекта:", error);
       return response.status(500).json({ message: "Ошибка сервера" });
