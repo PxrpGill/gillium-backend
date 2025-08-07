@@ -1,4 +1,3 @@
-// models/task-model.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,6 +9,7 @@ import {
 } from "typeorm";
 import { TaskColumnModel } from "./task-column-model";
 import { UserModel } from "./user-model";
+import { TaskStatusModel } from "./task-status-model";
 
 @Entity()
 export class TaskModel {
@@ -40,4 +40,8 @@ export class TaskModel {
   @ManyToOne(() => UserModel, { eager: true })
   @JoinColumn({ name: "creator_id" })
   creator: UserModel;
+
+  @ManyToOne(() => TaskStatusModel, { eager: true })
+  @JoinColumn({ name: "status_id" })
+  status: TaskStatusModel;
 }

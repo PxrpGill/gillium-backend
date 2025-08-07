@@ -12,6 +12,7 @@ import slugify from "slugify";
 import { UserModel } from "./user-model";
 import { ProjectUserRoleModel } from "./project-user-role";
 import { TaskColumnModel } from "./task-column-model";
+import { TaskStatusModel } from "./task-status-model";
 
 @Entity()
 export class ProjectModel {
@@ -33,6 +34,9 @@ export class ProjectModel {
 
   @OneToMany(() => TaskColumnModel, (column) => column.project)
   columns: TaskColumnModel[];
+
+  @OneToMany(() => TaskStatusModel, (status) => status.project)
+  statuses: TaskStatusModel[];
 
   @BeforeInsert()
   @BeforeUpdate()

@@ -16,6 +16,7 @@ app.use("/", AppRoutes.userRoutes);
 app.use("/", AppRoutes.projectRoutes);
 app.use("/", AppRoutes.taskRoutes);
 app.use("/", AppRoutes.taskColumnRoutes);
+app.use("/", AppRoutes.taskStatusRoutes);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 

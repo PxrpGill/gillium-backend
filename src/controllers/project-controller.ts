@@ -63,8 +63,10 @@ export class ProjectController {
           columns: {
             tasks: {
               creator: true,
+              status: true,
             },
           },
+          statuses: true,
         },
       });
 

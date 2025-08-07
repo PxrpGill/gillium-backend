@@ -6,6 +6,7 @@ import { ProjectModel } from "../models/project-model";
 import { ProjectUserRoleModel } from "../models/project-user-role";
 import { TaskColumnModel } from "../models/task-column-model";
 import { TaskModel } from "../models/task-model";
+import { TaskStatusModel } from "../models/task-status-model";
 
 dotenv.config();
 
@@ -20,5 +21,6 @@ export const AppDataSource = new DataSource({
     ProjectUserRoleModel,
     TaskColumnModel,
     TaskModel,
+    TaskStatusModel,
   ],
 });
